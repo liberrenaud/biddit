@@ -1,0 +1,992 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SerializableScraperProject xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Version>26</Version>
+  <Assignments>
+    <Code>ExtractMainContent = {&#xD;
+	(Variation {&#xD;
+		"https://www.biddit.be/fr/catalog/landing?p=@"&#xD;
+	} {&#xD;
+		1&#xD;
+	} {&#xD;
+		1&#xD;
+	} {&#xD;
+		2&#xD;
+	}) -&gt; target&#xD;
+	(Browser.Load {&#xD;
+		target&#xD;
+	})&#xD;
+	Select.HouseLink&#xD;
+	Browser.Navigate&#xD;
+	Select.ExtendDetails&#xD;
+	Browser.Click&#xD;
+	(@Core.Unit #{&#xD;
+		propertyID: {&#xD;
+			Select.PropertyRef&#xD;
+		}&#xD;
+		uRL: {&#xD;
+			Gather.URL&#xD;
+		}&#xD;
+		description: {&#xD;
+			Select.Short_Desc&#xD;
+		}&#xD;
+		location: {&#xD;
+			Select.City&#xD;
+		}&#xD;
+		type: {&#xD;
+			Select.Type&#xD;
+		}&#xD;
+		details: {&#xD;
+			Select.Details&#xD;
+		}&#xD;
+		url: {&#xD;
+			Select.GoogleLocation&#xD;
+			Gather.Link&#xD;
+		}&#xD;
+		price: {&#xD;
+			Select.CurrentPrice&#xD;
+		}&#xD;
+		priceHistory: {&#xD;
+			Select.PriceHistory&#xD;
+		}&#xD;
+		endAuction: {&#xD;
+			Select.TimeEnd&#xD;
+		}&#xD;
+	})&#xD;
+}&#xD;
+Main = {&#xD;
+	ExtractMainContent&#xD;
+	RetrieveBiddingHistory&#xD;
+}&#xD;
+RetrieveBiddingHistory = {&#xD;
+	Select.HistoricBidding&#xD;
+	Browser.Click&#xD;
+	(@Core.Unit #{&#xD;
+		historyBidding: {&#xD;
+			…&#xD;
+		}&#xD;
+	})&#xD;
+}&#xD;
+TestAction = {&#xD;
+	(Variation {&#xD;
+		"https://www.biddit.be/fr/catalog/landing?p=@"&#xD;
+	} {&#xD;
+		1&#xD;
+	} {&#xD;
+		1&#xD;
+	} {&#xD;
+		3&#xD;
+	}) -&gt; target&#xD;
+	(Browser.Load {&#xD;
+		target&#xD;
+	})&#xD;
+	$regionstart "{\"Type\":1,\"Name\":\"Extract\",\"Collapsed\":false}"&#xD;
+	Select.RowContainer&#xD;
+	(@Core.Unit #{&#xD;
+		propertyReference: {&#xD;
+			Select.PropertyReference&#xD;
+		}&#xD;
+	})&#xD;
+	$regionend&#xD;
+}&#xD;
+Variation = {&#xD;
+	\url start step count.{&#xD;
+		(Sequence.FromValues {&#xD;
+			(List.Range {&#xD;
+				0&#xD;
+			} {&#xD;
+				count&#xD;
+			})&#xD;
+		}) -&gt; index&#xD;
+		(@Core.Unit {&#xD;
+			(String.Replace {&#xD;
+				url&#xD;
+			} {&#xD;
+				"@"&#xD;
+			} {&#xD;
+				(Core.ToString {&#xD;
+					(@List.Sum [{&#xD;
+						start&#xD;
+					} {&#xD;
+						(@List.Product [{&#xD;
+							step&#xD;
+						} {&#xD;
+							index&#xD;
+						}])&#xD;
+					}])&#xD;
+				})&#xD;
+			})&#xD;
+		})&#xD;
+	}&#xD;
+}</Code>
+  </Assignments>
+  <TextGatherers />
+  <Code>
+    <Code />
+  </Code>
+  <HorizontalDatabase>
+    <Schema xsi:type="SerializableObjectType">
+      <Members>
+        <SerializableObjectMember>
+          <Name>ExtractMainContent</Name>
+          <Type xsi:type="SerializableListType">
+            <ItemType xsi:type="SerializableObjectType">
+              <Members>
+                <SerializableObjectMember>
+                  <Name>propertyID</Name>
+                  <Type xsi:type="SerializableListType">
+                    <ItemType xsi:type="SerializableSimpleType">
+                      <Kind>String</Kind>
+                    </ItemType>
+                  </Type>
+                </SerializableObjectMember>
+                <SerializableObjectMember>
+                  <Name>description</Name>
+                  <Type xsi:type="SerializableListType">
+                    <ItemType xsi:type="SerializableSimpleType">
+                      <Kind>String</Kind>
+                    </ItemType>
+                  </Type>
+                </SerializableObjectMember>
+                <SerializableObjectMember>
+                  <Name>location</Name>
+                  <Type xsi:type="SerializableListType">
+                    <ItemType xsi:type="SerializableSimpleType">
+                      <Kind>String</Kind>
+                    </ItemType>
+                  </Type>
+                </SerializableObjectMember>
+                <SerializableObjectMember>
+                  <Name>type</Name>
+                  <Type xsi:type="SerializableListType">
+                    <ItemType xsi:type="SerializableSimpleType">
+                      <Kind>String</Kind>
+                    </ItemType>
+                  </Type>
+                </SerializableObjectMember>
+                <SerializableObjectMember>
+                  <Name>details</Name>
+                  <Type xsi:type="SerializableListType">
+                    <ItemType xsi:type="SerializableSimpleType">
+                      <Kind>String</Kind>
+                    </ItemType>
+                  </Type>
+                </SerializableObjectMember>
+                <SerializableObjectMember>
+                  <Name>url</Name>
+                  <Type xsi:type="SerializableListType">
+                    <ItemType xsi:type="SerializableSimpleType">
+                      <Kind>String</Kind>
+                    </ItemType>
+                  </Type>
+                </SerializableObjectMember>
+                <SerializableObjectMember>
+                  <Name>price</Name>
+                  <Type xsi:type="SerializableListType">
+                    <ItemType xsi:type="SerializableSimpleType">
+                      <Kind>String</Kind>
+                    </ItemType>
+                  </Type>
+                </SerializableObjectMember>
+                <SerializableObjectMember>
+                  <Name>priceHistory</Name>
+                  <Type xsi:type="SerializableListType">
+                    <ItemType xsi:type="SerializableSimpleType">
+                      <Kind>String</Kind>
+                    </ItemType>
+                  </Type>
+                </SerializableObjectMember>
+                <SerializableObjectMember>
+                  <Name>endAuction</Name>
+                  <Type xsi:type="SerializableListType">
+                    <ItemType xsi:type="SerializableSimpleType">
+                      <Kind>String</Kind>
+                    </ItemType>
+                  </Type>
+                </SerializableObjectMember>
+              </Members>
+            </ItemType>
+          </Type>
+        </SerializableObjectMember>
+      </Members>
+    </Schema>
+  </HorizontalDatabase>
+  <Kinds>
+    <SerializableNamedPairOfString>
+      <Name>@__</Name>
+      <Value>{"tag3":{"val":"NAV"},"visible":{"val":true},"id":{"val":""},"class":{"page-link":true},"tag":{"val":"A"},"classes1":{"val":"page-item"},"class2":{"pagination":true,"justify-content-center":true,"centered-ul":true,"mt-3":true},"id1":{"val":""},"tag2":{"val":"UL"},"text":{"val":"2"},"prevText":{"val":"1"},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"page-item":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"0":0,"1":4,"2":0},"classes2":{"val":"pagination justify-content-center centered-ul mt-3"},"tag1":{"val":"LI"},"id3":{"val":""},"classes3":{"val":""},"classes":{"val":"page-link"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>City</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"address-color":true,"bold":true,"text-nowrap":true},"class3":{"col-md-6":true,"property-header-info":true},"tag":{"val":"SPAN"},"classes1":{"val":"ml-2"},"class2":{"icon-before-parent":true,"address":true},"id1":{"val":""},"tag2":{"val":"DIV"},"prevText":{"val":""},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"ml-2":true},"id2":{"val":""},"color":{"val":"rgb(122, 54, 42)"},"indexes":{"0":0,"1":1,"2":2},"classes2":{"val":"icon-before-parent address"},"tag1":{"val":"DIV"},"id3":{"val":""},"classes3":{"val":"col-md-6 property-header-info"},"classes":{"val":"address-color bold text-nowrap"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>Code</Name>
+      <Value>{"tag3":{"val":"APP-CORE-PROPERTY-DISPLAY"},"visible":{"val":true},"id":{"val":""},"class":{"property-reference":true},"tag":{"val":"DIV"},"classes1":{"val":"property-detail-info w-100"},"class2":{"display-container":true,"row":true,"width":true},"id1":{"val":""},"tag2":{"val":"A"},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"property-detail-info":true,"w-100":true},"id2":{"val":""},"color":{"val":"rgb(172, 79, 25)"},"indexes":{"0":2,"1":1,"2":0},"classes2":{"val":"display-container row width"},"tag1":{"val":"DIV"},"id3":{"val":""},"classes3":{"val":""},"classes":{"val":"property-reference"},"title":{"val":null}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>CurrentPrice</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class3":{"bid-history-header":true,"row":true,"mx-0":true,"pb-3":true,"text-center":true,"text-sm-left":true},"tag":{"val":"H3"},"classes1":{"val":"col-sm-6 col-12 text-center text-sm-right pr-sm-0"},"class2":{"col-sm-11":true,"col-12":true,"row":true,"pr-0":true},"id1":{"val":""},"tag2":{"val":"DIV"},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"col-sm-6":true,"col-12":true,"text-center":true,"text-sm-right":true,"pr-sm-0":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"1":1,"2":1},"classes2":{"val":"col-sm-11 col-12 row pr-0"},"tag1":{"val":"DIV"},"id3":{"val":""},"classes3":{"val":"bid-history-header row mx-0 pb-3 text-center text-sm-left"},"classes":{"val":""},"title":{"val":null}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>Details</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"long-info":true},"tag":{"val":"DIV"},"classes1":{"val":""},"class2":{"property-details":true},"id1":{"val":"detail-fields"},"tag2":{"val":"DIV"},"font":{"val":"Montserrat, sans-serif"},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"0":0,"1":3},"classes2":{"val":"property-details"},"tag1":{"val":"APP-CORE-PROPERTY-INFO-DETAIL-FIELDS"},"id3":{"val":""},"classes3":{"val":""},"classes":{"val":"long-info"},"title":{"val":null}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>ExtendDetails</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"d-inline":true},"tag":{"val":"A"},"classes1":{"val":"toggle-detail-fields"},"class2":{"property-details":true},"id1":{"val":""},"tag2":{"val":"DIV"},"text":{"val":" Montrer plus"},"prevText":{"val":""},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"toggle-detail-fields":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"0":2,"1":5,"2":5},"classes2":{"val":"property-details"},"tag1":{"val":"DIV"},"id3":{"val":""},"classes3":{"val":""},"classes":{"val":"d-inline"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>GoogleLocation</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"dotted-line":true,"d-inline-block":true,"ml-2":true},"class3":{"row":true,"mb-4":true},"tag":{"val":"DIV"},"classes1":{"val":"map-link icon-before-parent address mt-md-1"},"class2":{"col-md-6":true,"property-header-info":true},"id1":{"val":""},"tag2":{"val":"DIV"},"text":{"val":"Voir sur la carte"},"prevText":{"val":""},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"map-link":true,"icon-before-parent":true,"address":true,"mt-md-1":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"0":1,"1":3,"2":0},"classes2":{"val":"col-md-6 property-header-info"},"tag1":{"val":"DIV"},"id3":{"val":""},"classes3":{"val":"row mb-4"},"classes":{"val":"dotted-line d-inline-block ml-2"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>HistoricBidding</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"dotted-line":true},"class3":{"auction-history":true},"tag":{"val":"A"},"classes1":{"val":"text-center w-100 bid-history-extend-link"},"class2":{"auction-bids-wrapper":true},"id1":{"val":""},"tag2":{"val":"DIV"},"text":{"val":"Afficher l’historique des enchères"},"prevText":{"val":"15/02/2021, 13:45:29\nEnchère\n€ 100.000"},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"text-center":true,"w-100":true,"bid-history-extend-link":true},"id2":{"val":""},"color":{"val":"rgb(128, 128, 128)"},"indexes":{"0":0,"1":23,"2":0},"classes2":{"val":"auction-bids-wrapper"},"tag1":{"val":"DIV"},"id3":{"val":""},"classes3":{"val":"auction-history"},"classes":{"val":"dotted-line"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>HouseLink</Name>
+      <Value>{"tag3":{"val":"A"},"visible":{"val":true},"id":{"val":""},"class":{"image-prop":true},"class3":{"display-container":true,"row":true,"width":true},"tag":{"val":"DIV"},"classes1":{"val":"overflow-wrapper"},"class2":{"image-parent":true},"id1":{"val":""},"tag2":{"val":"DIV"},"text":{},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"overflow-wrapper":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"0":0,"1":0,"2":0},"classes2":{"val":"image-parent"},"tag1":{"val":"DIV"},"id3":{"val":""},"classes3":{"val":"display-container row width"},"classes":{"val":"image-prop"},"title":{"val":null}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>ListItem</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"col-xl-4":true,"col-lg-6":true,"col-md-6":true,"col-sm-12":true},"class3":{"bid-container":true},"tag":{"val":"DIV"},"classes1":{"val":"row"},"class2":{"container":true},"id1":{"val":""},"tag2":{"val":"DIV"},"childrenLen":{"val":1},"font":{"val":"Montserrat, sans-serif"},"class1":{"row":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"1":3,"2":0},"classes2":{"val":"container"},"tag1":{"val":"DIV"},"id3":{"val":"top-container"},"classes3":{"val":"bid-container"},"classes":{"val":"col-xl-4 col-lg-6 col-md-6 col-sm-12"},"title":{"val":null}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>Montre_PLus</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"dotted-line":true},"class3":{"container":true},"tag":{"val":"SPAN"},"classes1":{"val":"col-md-3 bid-show-more d-block d-sm-block d-md-none mt-2"},"class2":{"row":true},"id1":{"val":""},"tag2":{"val":"DIV"},"prevText":{"val":"€ 94.000\n Se termine le 23/02 10:00\nInstapklare woning\n3890 Gingelom - Statiestraat 22\nCode: 192373"},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"col-md-3":true,"bid-show-more":true,"d-block":true,"d-sm-block":true,"d-md-none":true,"mt-2":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"0":0,"1":5,"2":3},"classes2":{"val":"row"},"tag1":{"val":"A"},"id3":{"val":""},"classes3":{"val":"container"},"classes":{"val":"dotted-line"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>Montrer_Plus</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"dotted-line":true},"class3":{"container":true},"tag":{"val":"SPAN"},"classes1":{"val":"col-md-3 bid-show-more d-block d-sm-block d-md-none mt-2"},"class2":{"row":true},"id1":{"val":""},"tag2":{"val":"DIV"},"prevText":{"val":"€ 94.000\n Se termine le 23/02 10:00\nInstapklare woning\n3890 Gingelom - Statiestraat 22\nCode: 192373"},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"col-md-3":true,"bid-show-more":true,"d-block":true,"d-sm-block":true,"d-md-none":true,"mt-2":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"0":0,"1":5,"2":3},"classes2":{"val":"row"},"tag1":{"val":"A"},"id3":{"val":""},"classes3":{"val":"container"},"classes":{"val":"dotted-line"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>Page_3</Name>
+      <Value>{"tag3":{"val":"NAV"},"visible":{"val":true},"id":{"val":""},"class":{"page-link":true},"tag":{"val":"A"},"classes1":{"val":"page-item"},"class2":{"pagination":true,"justify-content-center":true,"centered-ul":true,"mt-3":true},"id1":{"val":""},"tag2":{"val":"UL"},"text":{"val":"3"},"prevText":{"val":"2"},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"page-item":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"0":0,"1":5,"2":0},"classes2":{"val":"pagination justify-content-center centered-ul mt-3"},"tag1":{"val":"LI"},"id3":{"val":""},"classes3":{"val":""},"classes":{"val":"page-link"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>Page2</Name>
+      <Value>{"tag3":{"val":"NAV"},"visible":{"val":true},"id":{"val":""},"class":{"page-link":true},"tag":{"val":"A"},"classes1":{"val":"page-item"},"class2":{"pagination":true,"justify-content-center":true,"centered-ul":true,"mt-3":true},"id1":{"val":""},"tag2":{"val":"UL"},"text":{"val":"2"},"prevText":{"val":"1"},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"page-item":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"0":0,"1":4,"2":0},"classes2":{"val":"pagination justify-content-center centered-ul mt-3"},"tag1":{"val":"LI"},"id3":{"val":""},"classes3":{"val":""},"classes":{"val":"page-link"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>PriceHistory</Name>
+      <Value>{"tag3":{"val":"APP-CATALOG-BID-HISTORY"},"visible":{"val":true},"id":{"val":""},"class":{"auction-bids-wrapper":true},"tag":{"val":"DIV"},"classes1":{"val":"auction-history"},"id1":{"val":""},"tag2":{"val":"DIV"},"prevText":{"val":""},"childrenLen":{"val":6},"font":{"val":"Montserrat, sans-serif"},"class1":{"auction-history":true},"id2":{"val":""},"color":{"val":"rgb(128, 128, 128)"},"indexes":{"0":0,"1":1,"2":5},"classes2":{"val":""},"tag1":{"val":"DIV"},"id3":{"val":""},"classes3":{"val":""},"classes":{"val":"auction-bids-wrapper"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>Property_Listing</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"col-xl-4":true,"col-lg-6":true,"col-md-6":true,"col-sm-12":true},"class3":{"bid-container":true},"tag":{"val":"DIV"},"classes1":{"val":"row"},"class2":{"container":true},"id1":{"val":""},"tag2":{"val":"DIV"},"childrenLen":{"val":1},"font":{"val":"Montserrat, sans-serif"},"class1":{"row":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"1":3,"2":0},"classes2":{"val":"container"},"tag1":{"val":"DIV"},"id3":{"val":"top-container"},"classes3":{"val":"bid-container"},"classes":{"val":"col-xl-4 col-lg-6 col-md-6 col-sm-12"},"title":{"val":null}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>PropertyRef</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"property-ref":true},"class3":{"row":true,"mb-4":true},"tag":{"val":"SPAN"},"classes1":{"val":"mt-3 mt-md-4"},"class2":{"col-md-6":true,"property-header-info":true},"id1":{"val":""},"tag2":{"val":"DIV"},"prevText":{"val":"Terrain à bâtir"},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"mt-3":true,"mt-md-4":true},"id2":{"val":""},"color":{"val":"rgb(172, 79, 25)"},"indexes":{"0":1,"1":4,"2":0},"classes2":{"val":"col-md-6 property-header-info"},"tag1":{"val":"DIV"},"id3":{"val":""},"classes3":{"val":"row mb-4"},"classes":{"val":"property-ref"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>PropertyReference</Name>
+      <Value>{"tag3":{"val":"APP-CORE-PROPERTY-DISPLAY"},"visible":{"val":true},"id":{"val":""},"class":{"property-reference":true},"tag":{"val":"DIV"},"classes1":{"val":"property-detail-info w-100"},"class2":{"display-container":true,"row":true,"width":true},"id1":{"val":""},"tag2":{"val":"A"},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"property-detail-info":true,"w-100":true},"id2":{"val":""},"color":{"val":"rgb(172, 79, 25)"},"indexes":{"0":2,"1":1,"2":0},"classes2":{"val":"display-container row width"},"tag1":{"val":"DIV"},"id3":{"val":""},"classes3":{"val":""},"classes":{"val":"property-reference"},"title":{"val":null}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>RowContainer</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"col-xl-4":true,"col-lg-6":true,"col-md-6":true,"col-sm-12":true},"class3":{"bid-container":true},"tag":{"val":"DIV"},"classes1":{"val":"row"},"class2":{"container":true},"id1":{"val":""},"tag2":{"val":"DIV"},"childrenLen":{"val":1},"font":{"val":"Montserrat, sans-serif"},"class1":{"row":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"1":3,"2":0},"classes2":{"val":"container"},"tag1":{"val":"DIV"},"id3":{"val":"top-container"},"classes3":{"val":"bid-container"},"classes":{"val":"col-xl-4 col-lg-6 col-md-6 col-sm-12"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>Short_Desc</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"property-title":true,"mb-3":true},"class3":{"property-body":true},"tag":{"val":"H1"},"classes1":{"val":"col-md-6 property-header-info"},"class2":{"row":true,"mb-4":true},"id1":{"val":""},"tag2":{"val":"DIV"},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"col-md-6":true,"property-header-info":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"0":1,"1":0,"2":0},"classes2":{"val":"row mb-4"},"tag1":{"val":"DIV"},"id3":{"val":""},"classes3":{"val":"property-body"},"classes":{"val":"property-title mb-3"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>TimeEnd</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"countdown-info-text":true},"class3":{"countdown-wrapper":true},"tag":{"val":"SMALL"},"classes1":{"val":"timer-wrapper col-10 col-sm-12 col-xl-7 text-center text-sm-left my-auto mx-auto mx-sm-0"},"class2":{"row":true},"id1":{"val":""},"tag2":{"val":"DIV"},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"timer-wrapper":true,"col-10":true,"col-sm-12":true,"col-xl-7":true,"text-center":true,"text-sm-left":true,"my-auto":true,"mx-auto":true,"mx-sm-0":true},"id2":{"val":""},"color":{"val":"rgb(0, 13, 31)"},"indexes":{"0":4,"1":1,"2":0},"classes2":{"val":"row"},"tag1":{"val":"DIV"},"id3":{"val":""},"classes3":{"val":"countdown-wrapper"},"classes":{"val":"countdown-info-text"},"title":{"val":null}}</Value>
+    </SerializableNamedPairOfString>
+    <SerializableNamedPairOfString>
+      <Name>Type</Name>
+      <Value>{"tag3":{"val":"DIV"},"visible":{"val":true},"id":{"val":""},"class":{"property-type":true,"mr-2":true},"class3":{"row":true,"mb-4":true},"tag":{"val":"SPAN"},"classes1":{"val":"mt-3 mt-md-4"},"class2":{"col-md-6":true,"property-header-info":true},"id1":{"val":""},"tag2":{"val":"DIV"},"prevText":{"val":"Voir sur la carte"},"childrenLen":{"val":0},"font":{"val":"Montserrat, sans-serif"},"class1":{"mt-3":true,"mt-md-4":true},"id2":{"val":""},"color":{"val":"rgb(84, 88, 90)"},"indexes":{"0":0,"1":4,"2":0},"classes2":{"val":"col-md-6 property-header-info"},"tag1":{"val":"DIV"},"id3":{"val":""},"classes3":{"val":"row mb-4"},"classes":{"val":"property-type mr-2"},"title":{"val":null},"_tolerance":{"val":0.044}}</Value>
+    </SerializableNamedPairOfString>
+  </Kinds>
+  <Extractors>
+    <SerializableGatherer>
+      <Name>HTML</Name>
+      <Value>var result = function (element) {&#xD;
+    return element.nodeType === 1 ? element.outerHTML : element.nodeValue;&#xD;
+};&#xD;
+&#xD;
+result.noCache = false;&#xD;
+return result;&#xD;
+</Value>
+      <Visible>true</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>Link</Name>
+      <Value>var result = function (element) {&#xD;
+    var upperTag = function (element) {&#xD;
+        return element.tagName ? element.tagName.toUpperCase() : element.tagName;&#xD;
+    };&#xD;
+&#xD;
+    var linkOf = function (element) {&#xD;
+        return element &amp;&amp; element.href &amp;&amp; (element.protocol === "http:" || element.protocol === "https:" || element.protocol == "file:" || element.protocol == "ftp:") ? element.href : null;&#xD;
+    };&#xD;
+&#xD;
+    var original = element;&#xD;
+&#xD;
+    while (element &amp;&amp; (!element.tagName || upperTag(element) !== 'A'))&#xD;
+        element = element.parentNode;&#xD;
+&#xD;
+    var result = linkOf(element);&#xD;
+&#xD;
+    if (!result) {&#xD;
+        if (original.children.length == 1) {&#xD;
+            var child = original.children[0];&#xD;
+&#xD;
+            if (upperTag(child) === 'A') {&#xD;
+                result = linkOf(child);&#xD;
+&#xD;
+                if (!result) {&#xD;
+                    if (child.children.length == 1) {&#xD;
+                        child = child.children[0];&#xD;
+&#xD;
+                        if (upperTag(child) === 'A')&#xD;
+                            result = linkOf(child);&#xD;
+                    }&#xD;
+                }&#xD;
+            }&#xD;
+        }&#xD;
+    }&#xD;
+&#xD;
+    return result;&#xD;
+};&#xD;
+&#xD;
+result.noCache = false;&#xD;
+return result;&#xD;
+</Value>
+      <Visible>true</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>Number</Name>
+      <Value>var result = function (element) {&#xD;
+    var getText = function () {&#xD;
+        return element.nodeType === 1 ? element.innerText : element.nodeValue;&#xD;
+    };&#xD;
+&#xD;
+    var regex = /-?(?=[1-9]|0(?!\d))[\d\,]+(\.\d+)?/;&#xD;
+    var first = regex.exec(getText(element));&#xD;
+    return first &amp;&amp; first.length ? first[0] : null;&#xD;
+};&#xD;
+&#xD;
+result.noCache = false;&#xD;
+return result;&#xD;
+</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>OwnText</Name>
+      <Value>var result = function (element) {&#xD;
+    var text = [].reduce.call(element.childNodes || [], (a, b) =&gt; a + (b.nodeType === 3 ? b.textContent : ''), '');&#xD;
+    return text.trim();&#xD;
+};&#xD;
+&#xD;
+result.noCache = false;&#xD;
+return result;&#xD;
+</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>Path</Name>
+      <Value>var result = function (element) {&#xD;
+    return window.___getPath(element);&#xD;
+};&#xD;
+&#xD;
+result.noCache = false;&#xD;
+return result;&#xD;
+</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>Src</Name>
+      <Value>var result = function (element) {&#xD;
+    return element.src || "";&#xD;
+};&#xD;
+&#xD;
+result.noCache = false;&#xD;
+return result;&#xD;
+</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>Tag</Name>
+      <Value>var result = function (element) {&#xD;
+    var upperTag = function (element) {&#xD;
+        return element.nodeType === 1 ? element.tagName.toUpperCase() : "HS-NODE";&#xD;
+    };&#xD;
+&#xD;
+    return upperTag(element);&#xD;
+};&#xD;
+&#xD;
+result.noCache = false;&#xD;
+return result;&#xD;
+</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>Text</Name>
+      <Value>var result = function (element) {&#xD;
+    var upperTag = function (element) {&#xD;
+        return element.tagName ? element.tagName.toUpperCase() : element.tagName;&#xD;
+    };&#xD;
+&#xD;
+    var getElementText = function (e) {&#xD;
+        switch (upperTag(e)) {&#xD;
+            case 'SELECT':&#xD;
+                if (e.selectedOptions &amp;&amp; e.selectedOptions.length === 1)&#xD;
+                    return e.selectedOptions[0].innerText;&#xD;
+            default:&#xD;
+                return e.innerText;&#xD;
+        }&#xD;
+    };&#xD;
+&#xD;
+    var text = element.nodeType === 1 ? getElementText(element) : element.nodeValue;&#xD;
+    return text ? text.trim() : "";&#xD;
+};&#xD;
+&#xD;
+result.noCache = false;&#xD;
+return result;&#xD;
+</Value>
+      <Visible>true</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>URL</Name>
+      <Value>var result =  function (element) {&#xD;
+    return element.ownerDocument.defaultView.location.href;&#xD;
+};&#xD;
+&#xD;
+result.noCache = false;&#xD;
+return result;&#xD;
+</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>Value</Name>
+      <Value>var result = function (element) {&#xD;
+    return element.value || element.getAttribute('value');&#xD;
+};&#xD;
+&#xD;
+result.noCache = false;&#xD;
+return result;&#xD;
+</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+  </Extractors>
+  <KindGatherers>
+    <SerializableGatherer>
+      <Name>childrenLen</Name>
+      <Value>var result = function (element) {&#xD;
+    return { val: element.nodeType === 1 ? element.children.length : 0 };&#xD;
+};&#xD;
+&#xD;
+result.score = 0.7; // Default&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>class</Name>
+      <Value>var result = function (element) {&#xD;
+    if (element.nodeType !== 1)&#xD;
+        element = element.parentElement;&#xD;
+&#xD;
+    var result = {};&#xD;
+    var list = element.classList;&#xD;
+    var len = list.length;&#xD;
+&#xD;
+    for (var i = 0; i &lt; len; i++)&#xD;
+        result[list[i]] = true;&#xD;
+&#xD;
+    return result;&#xD;
+};&#xD;
+&#xD;
+result.score = 0.73;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>class1</Name>
+      <Value>var result = window.___makeRelatedGatherer('class', function (element) {&#xD;
+    return element.parentNode;&#xD;
+});&#xD;
+&#xD;
+result.score = 0.87;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>class2</Name>
+      <Value>var result = window.___makeRelatedGatherer('class', function (element) {&#xD;
+    return element.parentNode.parentNode;&#xD;
+});&#xD;
+&#xD;
+result.score = 0.87;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>class3</Name>
+      <Value>var result = window.___makeRelatedGatherer('class', function (element) {&#xD;
+    return element.parentNode.parentNode.parentNode;&#xD;
+});&#xD;
+&#xD;
+result.score = 0.9;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>classes</Name>
+      <Value>var result = function (element) {&#xD;
+    if (element.nodeType !== 1)&#xD;
+        element = element.parentElement;&#xD;
+&#xD;
+    return { val: typeof element.className === 'string' ? element.className : null };&#xD;
+};&#xD;
+&#xD;
+result.score = 0.91;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>classes1</Name>
+      <Value>var result = window.___makeRelatedGatherer('classes', function (element) {&#xD;
+    return element.parentNode;&#xD;
+});&#xD;
+&#xD;
+result.score = 0.95;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>classes2</Name>
+      <Value>var result = window.___makeRelatedGatherer('classes', function (element) {&#xD;
+    return element.parentNode.parentNode;&#xD;
+});&#xD;
+&#xD;
+result.score = 0.95;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>classes3</Name>
+      <Value>var result = window.___makeRelatedGatherer('classes', function (element) {&#xD;
+    return element.parentNode.parentNode.parentNode;&#xD;
+});&#xD;
+&#xD;
+result.score = 0.81;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>colIndex</Name>
+      <Value>var result = function (element) {&#xD;
+    var maxUp = 5;&#xD;
+&#xD;
+    function closestTd(element) {&#xD;
+        for (var up = 0; up &lt; maxUp; up++) {&#xD;
+            if (!element) return null;&#xD;
+            if (/^t[dh]$/i.test(element.nodeName))&#xD;
+                return element;&#xD;
+            element = element.parentNode;&#xD;
+        }&#xD;
+&#xD;
+        return null;&#xD;
+    }&#xD;
+&#xD;
+    function colSpan(col) {&#xD;
+        return parseInt((col &amp;&amp; col.nodeType == 1 &amp;&amp; /^t[dh]$/i.test(element.nodeName)) ? (col.getAttribute('colSpan') || 1) : 0);&#xD;
+    }&#xD;
+&#xD;
+    function endIndex(element) {&#xD;
+        var colPos = colSpan(element);&#xD;
+&#xD;
+        while (element) {&#xD;
+            element = element.previousSibling;&#xD;
+            colPos += colSpan(element);&#xD;
+        }&#xD;
+&#xD;
+        return colPos;&#xD;
+    }&#xD;
+&#xD;
+    element = closestTd(element);&#xD;
+&#xD;
+    if (element)&#xD;
+        return { val: endIndex(element.previousSibling) };&#xD;
+    else&#xD;
+        return {};&#xD;
+};&#xD;
+&#xD;
+result.score = 0.7; // Default&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>color</Name>
+      <Value>var result = function (element) {&#xD;
+    if (element.nodeType !== 1)&#xD;
+        element = element.parentElement;&#xD;
+&#xD;
+    return { val: window.getComputedStyle(element).color };&#xD;
+};&#xD;
+&#xD;
+result.score = 1;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>font</Name>
+      <Value>var result = function (element) {&#xD;
+    if (element.nodeType !== 1)&#xD;
+        element = element.parentElement;&#xD;
+&#xD;
+    return { val: window.getComputedStyle(element)['font-family'] };&#xD;
+};&#xD;
+&#xD;
+result.score = 1;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>header</Name>
+      <Value>var result = function header(element) {&#xD;
+    var upperTag = function (element) {&#xD;
+        return element.tagName ? element.tagName.toUpperCase() : element.tagName;&#xD;
+    };&#xD;
+&#xD;
+    var getColumnIndex = function (e) {&#xD;
+        var maxLevels = 3;&#xD;
+&#xD;
+        while (e &amp;&amp; upperTag(e) !== 'TD' &amp;&amp; maxLevels &gt; 0) {&#xD;
+            e = e.parentElement;&#xD;
+            maxLevels--;&#xD;
+        }&#xD;
+&#xD;
+        if (e &amp;&amp; upperTag(e) === 'TD') {&#xD;
+            var index = 0;&#xD;
+            while ((e = e.previousElementSibling)) {&#xD;
+                index += e.colSpan || 1;&#xD;
+            }&#xD;
+            return index;&#xD;
+        }&#xD;
+        else&#xD;
+            return -1;&#xD;
+    };&#xD;
+&#xD;
+    var colIndex = getColumnIndex(element);&#xD;
+&#xD;
+    if (colIndex !== -1) {&#xD;
+        while (element &amp;&amp; upperTag(element) !== 'TABLE')&#xD;
+            element = element.parentElement;&#xD;
+&#xD;
+        if (element &amp;&amp; upperTag(element) === 'TABLE') {&#xD;
+            var tds = element.querySelectorAll('th,td');&#xD;
+            var index = 0;&#xD;
+            var latest = null;&#xD;
+&#xD;
+            for (var td of tds) {&#xD;
+                if (index &gt; colIndex)&#xD;
+                    return { val: (latest.innerText || "").trim() };&#xD;
+&#xD;
+                latest = td;&#xD;
+                index += td.colSpan || 1;&#xD;
+            }&#xD;
+        }&#xD;
+    }&#xD;
+&#xD;
+    return {};&#xD;
+};&#xD;
+&#xD;
+result.score = 0.9;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>id</Name>
+      <Value>var result = function (element) {&#xD;
+    if (element.nodeType !== 1)&#xD;
+        element = element.parentElement;&#xD;
+&#xD;
+    return { val: element.id };&#xD;
+};&#xD;
+&#xD;
+result.score = 0.98;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>id1</Name>
+      <Value>var result = window.___makeRelatedGatherer('id', function (element) {&#xD;
+    return element.parentNode;&#xD;
+});&#xD;
+&#xD;
+result.score = 0.91;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>id2</Name>
+      <Value>var result = window.___makeRelatedGatherer('id', function (element) {&#xD;
+    return element.parentNode.parentNode;&#xD;
+});&#xD;
+&#xD;
+result.score = 0.91;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>id3</Name>
+      <Value>var result = window.___makeRelatedGatherer('id', function (element) {&#xD;
+    return element.parentNode.parentNode.parentNode;&#xD;
+});&#xD;
+&#xD;
+result.score = 0.88;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>indexes</Name>
+      <Value>var result = function (element) {&#xD;
+    function getElementIndex(node) {&#xD;
+        var index = 0;&#xD;
+        while ((node = node.previousSibling)) {&#xD;
+            index++;&#xD;
+        }&#xD;
+        return index;&#xD;
+    }&#xD;
+&#xD;
+    var result = {};&#xD;
+    var level = 0;&#xD;
+    var levels = 3;&#xD;
+&#xD;
+    while (element &amp;&amp; level &lt; levels) {&#xD;
+        result[level] = getElementIndex(element);&#xD;
+        level++;&#xD;
+        element = element.parentElement&#xD;
+    }&#xD;
+&#xD;
+    return result;&#xD;
+};&#xD;
+&#xD;
+result.score = 0.86;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>names</Name>
+      <Value>var result = function (element) {&#xD;
+    function getElementName(node) {&#xD;
+        return node.nodeType === 1 ? (node.name || node.getAttribute('name')) : null;&#xD;
+    }&#xD;
+&#xD;
+    var result = {};&#xD;
+    var level = 0;&#xD;
+    var levels = 3;&#xD;
+&#xD;
+    while (element &amp;&amp; level &lt; levels) {&#xD;
+        var name = getElementName(element);&#xD;
+        if (name) result[level] = name;&#xD;
+        level++;&#xD;
+        element = element.parentElement&#xD;
+    }&#xD;
+&#xD;
+    return result;&#xD;
+};&#xD;
+&#xD;
+result.score = 0.75;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>prevText</Name>
+      <Value>var result = function (element) {&#xD;
+    var prevTextOf = function (e) {&#xD;
+        var maxDepth = 0;&#xD;
+        var maxLength = 128;&#xD;
+&#xD;
+        while (e &amp;&amp; !e.previousElementSibling &amp;&amp; maxDepth &gt; 0) {&#xD;
+            e = e.parentElement;&#xD;
+            maxDepth--;&#xD;
+        }&#xD;
+&#xD;
+        if (e &amp;&amp; e.previousElementSibling) {&#xD;
+            var fullText = e.previousElementSibling.innerText;&#xD;
+&#xD;
+            if (fullText.length &lt; maxLength)&#xD;
+                return { val: fullText };&#xD;
+&#xD;
+        }&#xD;
+&#xD;
+        return null;&#xD;
+    }&#xD;
+&#xD;
+    var maxParents = 3;&#xD;
+&#xD;
+    do {&#xD;
+        var prevText = prevTextOf(element);&#xD;
+&#xD;
+        if (prevText)&#xD;
+            return prevText;&#xD;
+&#xD;
+        if (element.parentElement &amp;&amp; maxParents &gt; 0) {&#xD;
+            element = element.parentElement;&#xD;
+            maxParents--;&#xD;
+        }&#xD;
+        else&#xD;
+            return null;&#xD;
+    }&#xD;
+    while (true);&#xD;
+};&#xD;
+&#xD;
+result.score = 0.7; // Default&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>tag</Name>
+      <Value>var result = function (element) {&#xD;
+    var upperTag = function (element) {&#xD;
+        return element.nodeType === 1 ? element.tagName.toUpperCase() : "HS-NODE";&#xD;
+    };&#xD;
+&#xD;
+    return { val: upperTag(element) };&#xD;
+};&#xD;
+&#xD;
+result.score = 1;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>tag1</Name>
+      <Value>var result = window.___makeRelatedGatherer('tag', function (element) {&#xD;
+    return element.parentNode;&#xD;
+});&#xD;
+&#xD;
+result.score = 1;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>tag2</Name>
+      <Value>var result = window.___makeRelatedGatherer('tag', function (element) {&#xD;
+    return element.parentNode.parentNode;&#xD;
+});&#xD;
+&#xD;
+result.score = 1;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>tag3</Name>
+      <Value>var result = window.___makeRelatedGatherer('tag', function (element) {&#xD;
+    return element.parentNode.parentNode.parentNode;&#xD;
+});&#xD;
+&#xD;
+result.score = 1;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>text</Name>
+      <Value>var result = function (element) {&#xD;
+&#xD;
+    if (element.nodeType !== 1)&#xD;
+        return null;&#xD;
+&#xD;
+    if (window.___textTags.has(element.tagName.toUpperCase()))&#xD;
+        return null;&#xD;
+&#xD;
+    var text = element.innerText;&#xD;
+&#xD;
+    if (!text)&#xD;
+        text = (element.querySelector('svg title') || {}).innerHTML;&#xD;
+&#xD;
+    if (text &amp;&amp; text.length &gt; 100)&#xD;
+        return null;&#xD;
+&#xD;
+    return { val: text };&#xD;
+};&#xD;
+&#xD;
+result.score = 0.2;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>title</Name>
+      <Value>var result = function (element) {&#xD;
+    if (element.nodeType !== 1)&#xD;
+        element = element.parentElement;&#xD;
+&#xD;
+    return { val: element.getAttribute('title') };&#xD;
+};&#xD;
+&#xD;
+result.score = 0.7;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+    <SerializableGatherer>
+      <Name>visible</Name>
+      <Value>var result = function (element) {&#xD;
+    if (element.nodeType !== 1)&#xD;
+        element = element.parentElement;&#xD;
+&#xD;
+    return { val: element.offsetParent !== null };&#xD;
+};&#xD;
+&#xD;
+result.score = 1;&#xD;
+return result;</Value>
+      <Visible>false</Visible>
+      <Locked>true</Locked>
+    </SerializableGatherer>
+  </KindGatherers>
+  <Scripts />
+  <Queries />
+  <JsonReaders />
+  <AjaxReaders />
+  <Settings />
+  <BlockList>*://*.doubleclick.net/*&#xD;
+*://*.amazon-adsystem.com/*&#xD;
+*://*.google-analytics.com/*&#xD;
+*://*.googlesyndication.com/*&#xD;
+*://*.advertising.com/*&#xD;
+*://*.imrworldwide.com/*&#xD;
+*://*.quantserve.com/*&#xD;
+*://*.googleadservices.com/*&#xD;
+*://*.scorecardresearch.com/*</BlockList>
+  <DynamicInject />
+  <ProjectCode>5c16f1dbb1798b925f3d4dd7cb19b0ce</ProjectCode>
+</SerializableScraperProject>

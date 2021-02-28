@@ -4,7 +4,6 @@ library(progress)
 library(here)
 library(reticulate)
 
-
 # Scraping Functions ------------------------------------------------------
 
 
@@ -17,3 +16,5 @@ library(reticulate)
 
 reticulate::conda_list()
 conda create -n py3.8 python=3.8 scikit-learn pandas numpy matplotlib
+
+reticulate::py_config()
