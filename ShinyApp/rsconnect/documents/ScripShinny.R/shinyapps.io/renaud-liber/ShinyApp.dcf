@@ -1,0 +1,12 @@
+name: ShinyApp
+title: ShinyApp
+username:
+account: renaud-liber
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3687369
+bundleId: 4263668
+url: https://renaud-liber.shinyapps.io/ShinyApp/
+when: 1614118964.41193
+asMultiple: FALSE
+asStatic: FALSE

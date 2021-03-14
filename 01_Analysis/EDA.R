@@ -8,6 +8,16 @@ library(crosstalk)
 
 # Import Data----
 raw_property_tbl <- read_csv("00_Data/Property_details.csv")
+
+raw_property_tbl %>% 
+  select(propertyID) %>% 
+  distinct()
+
+previous_pull <- read_csv("00_Data/export_last_pull.csv") %>% 
+  select(propertyID) %>% 
+  mutate(Fresh_flag="Old_property",
+         propertyID=as.character(propertyID))
+
 location <- read_delim("00_Data/code-postaux-belge.csv",delim = ";")
 
 # Prep Commune Data----
@@ -22,29 +32,49 @@ location_short <- location %>%
 # Define favourites
 
 favor_type <- c("Maison","Bungalow","Terrain à bâtir","Bois","Chalet","Ferme","Fermette","Manoir","Maison bel-étage")
-favor_location <- c(13,14,50,51,53,42,62)
+favor_location <- c(13,14,50,51,53,42,62,56)
 
 prepped_property <- raw_property_tbl %>%
-  filter(type %in% favor_type) %>% 
-  mutate(zip=str_extract(location,"[[:digit:]]+") %>% as.numeric(),
-         county=str_sub(zip,1L,2L),
-         location_prime=case_when(county %in% favor_location ~ 1,
-                                  TRUE ~ 0),
-         price_num=str_remove(price,"€") %>% str_remove("\\.") %>% as.numeric(),
-         text= str_glue("<b>{price} euros</b><br/>
-                        <a href='{url}'>{type}</a><br/>
-                       {description}"),
-         auction_status=case_when( statusAuction %>% str_detect("Commence")~"Not started",
-                    TRUE ~"Running Auction"),
-         propertyID= str_replace(propertyID,"Code: ","")
-         
-         ) %>% 
+  filter(type %in% favor_type) %>%
+  mutate(
+    zip = str_extract(location, "[[:digit:]]+") %>% as.numeric(),
+    county = str_sub(zip, 1L, 2L),
+    location_prime = case_when(county %in% favor_location ~ 1,
+                               TRUE ~ 0),
+    price_num = str_remove(price, "€") %>% str_remove("\\.") %>% as.numeric(),
+    text = str_glue(
+      "<b>{price} euros</b><br/>
+                        <a href='{uRL}'>{type}</a><br/>
+                       {description}"
+    ),
+    auction_status = case_when(
+      statusAuction %>% str_detect("Commence") ~ "Not started",
+      TRUE ~ "Running Auction"
+    ),
+    propertyID = str_replace(propertyID, "Code: ", "")
+    
+  ) %>%
   left_join(location_short,
-            by=c("zip"="Code"))
+            by = c("zip" = "Code")) %>%
+  left_join(previous_pull, 
+            by = "propertyID") %>%
+  mutate(
+    Fresh_flag = if_else(is.na(Fresh_flag), "New_property", Fresh_flag),
+    last_pull = format(Sys.time(), "%d %m %Y")
+  )
 
 
-prepped_property %>% 
-  group_by(propertyID)
+
+
+
+# Export to project folder
+prepped_property  %>% 
+  write_csv("00_Data/export_last_pull.csv")
+
+
+# Export to shiny folder
+prepped_property  %>% 
+  write_csv("ShinyApp/00_Data/export_last_pull.csv")
 
 
 # Map ----
