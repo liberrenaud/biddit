@@ -10,8 +10,7 @@ library(crosstalk)
 library(pins)
 
 
-raw_property_tbl <- read_csv("00_Data/export_last_pull.csv") %>% 
-  filter(propertyID =="194094")
+raw_property_tbl <- read_csv("00_Data/export_last_pull.csv") 
 location <- read_delim("00_Data/code-postaux-belge.csv",delim = ";")
 
 
