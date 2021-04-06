@@ -4,7 +4,8 @@ library(readr)
 library(leaflet)
 library(reactable)
 library(crosstalk)
-library(geosphere)
+library(gmt)
+
 
 
 
@@ -13,13 +14,12 @@ library(geosphere)
 raw_property_tbl <- read_csv("00_Data/Property_details.csv")
 bid_hist_tbl <- read_csv("00_Data/Extract_Archives.bidhis.csv")
 old_property_tbl <- read_csv("00_Data/Extract_Archives.csv")
-key_cities_lat_long <- read_csv("00_Data/Key_Cities_Lat_Long.csv")
-location <- read_delim("00_Data/code-postaux-belge.csv",delim = ";")
+
 
 data <- raw_property_tbl
 
 
-# Prepare Historical bids
+# Prepare Historical bids ---- 
 
 n_split <- max(sapply(strsplit(as.character(bid_hist_tbl$history),'\n'),length))
 
@@ -54,27 +54,18 @@ previous_pull <- read_csv("00_Data/previous_pull.csv") %>%
 
 
 
-# Prep Commune Data----
-
-location_short <- location %>% 
-  group_by(Code) %>% 
-  summarise(Longitude=first(Longitude),
-            Latitude=first(Latitude),
-            Coordonnees=first(Coordonnees)) 
 
 
-lat_long_key_cities <- key_cities_lat_long %>% 
-  pivot_longer(!City,names_to = "type", values_to = "value") %>% 
-  unite(type,type,City) %>% 
-  pivot_wider(names_from=type,values_from = value) 
 
-# Define favourites
+# Define favourites----
 
 favor_type <- c("Maison","Bungalow","Terrain à bâtir","Bois","Chalet","Ferme","Fermette","Manoir","Maison bel-étage")
 favor_location <- c(13,14,50,51,53,42,62,56)
 
 prepped_property <- raw_property_tbl 
 
+
+# Function to prepare the porperties----
 prepare_property <- function(data) {
   data %>%
     
@@ -97,9 +88,8 @@ prepare_property <- function(data) {
         details,
         "État du bâtiment\n[:alpha:]+\n|État du bâtiment\n[:alpha:]+[:blank:][:alpha:]+\n"
       ) ,
-      
-      
-      # Create Favourtie location and description items
+
+      # Create Favorite location and description items
       
       location_prime = case_when(county %in% favor_location ~ 1,
                                  TRUE ~ 0),
@@ -112,27 +102,39 @@ prepare_property <- function(data) {
       auction_status = case_when(
         statusAuction %>% str_detect("Commence") ~ "Not started",
         TRUE ~ "Running Auction"
-      ),
-      propertyID = str_replace(propertyID, "Code: ", "")
-      
+      )
     ) %>% 
     left_join(location_short,
             by = c("zip" = "Code")) %>%
     left_join(previous_pull,
               by = "propertyID") %>%
-    
-    left
-    
+
     mutate(
+      
+      # Calculate distance from key cities
+      
+      test=(lat_long_key_cities$Lat_Bruxelles),
+      test2=(lat_long_key_cities$Long_Bruxelles),
+      dist_Bru=geodist( Latitude , Longitude ,key_cities$Lat_Bruxelles, key_cities$Long_Bruxelles, units="km"),
+      dist_Ghe=geodist( Latitude , Longitude ,key_cities$Lat_Ghent, key_cities$Long_Ghent, units="km"),
+      dist_Antw=geodist( Latitude , Longitude ,key_cities$Lat_Antwerp, key_cities$Long_Antwerp, units="km"),
+      dist_Leuv=geodist( Latitude , Longitude ,key_cities$Lat_Leuven, key_cities$Long_Leuven, units="km"),
+      dist_Charl=geodist( Latitude , Longitude ,key_cities$Lat_Charleroi, key_cities$Long_Charleroi, units="km"),
+      dist_Nam=geodist( Latitude , Longitude ,key_cities$Lat_Namue, key_cities$Long_Namue, units="km"),
+      dist_Lieg=geodist( Latitude , Longitude ,key_cities$Lat_Liege, key_cities$Long_Liege, units="km"),
+      dist_Mons=geodist( Latitude , Longitude ,key_cities$Lat_Mons, key_cities$Long_Mons, units="km"),
+      #dist_Bru=distm(c(Longitude , Latitude ), c(lat_long_key_cities$Long_Bruxelles, lat_long_key_cities$Lat_Bruxelles), fun = distHaversine),
+      
+      
       Fresh_flag = if_else(is.na(Fresh_flag), "New_property", Fresh_flag),
       last_pull = format(Sys.time(), "%d %m %Y")
-    )
+    ) %>% view()
 }
 
 
 
 
-old_property_tbl %>% 
+%>% old_property_tbl %>% 
   prepare_property() %>% 
   leaflet() %>%
   addTiles() %>%
@@ -201,3 +203,6 @@ reactable(
   )
 )
   
+c("prepare_property") %>% 
+  dump(file = "00_Functions/prepped_property.R",
+       append = FALSE)
