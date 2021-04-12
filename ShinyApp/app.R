@@ -14,6 +14,7 @@ raw_property_tbl <- read_csv("00_Data/export_last_pull.csv")
 location <- read_delim("00_Data/code-postaux-belge.csv",delim = ";")
 
 
+
 ui <- dashboardPage(
   dashboardHeader(title="Biddit Dashboard"),
   dashboardSidebar(
@@ -70,6 +71,10 @@ server <- function(input, output) {
 
     })
   
+
+  
+  # Render Map
+  
   output$leaflet <- renderLeaflet({
     
     req(prepped_property)
@@ -80,30 +85,51 @@ server <- function(input, output) {
       addMarkers(lng = ~Longitude, lat = ~Latitude, popup = ~text)
   })
  
+  
+  
+  # Render Table
+  
+  
+  
   output$propertytbl <- renderReactable({
-    
+
     req(prepped_property)
-    
-    prepped_property() %>% 
-  select(price_num,type) %>%
-  reactable(
-  columns = list(
-    price_num= colDef(
-      name = "price",
-      format = colFormat(separators = TRUE,prefix = "€")
-    ),
-    type = colDef(
-      name = "type",
-      defaultSortOrder = "desc"
-      # ,
-      # html = TRUE,
-      # cell = function(value, index){
-      #   sprintf('<a href="%s" target="_blank">%s</a>', prepped_property$uRL[index], value)
-      # }
-  )
-        )
-      )
-   }) 
+
+    prepped_property() %>%
+      
+      select(type, Fresh_flag,price,land_surface,building_year,house_surface,uRL) %>% 
+      mutate(Fresh_flag=if_else(Fresh_flag=="Old_property","Old","New")) %>% 
+      
+      reactable(
+        striped = TRUE,
+        columns = list(
+          
+          type=colDef(
+            cell = function(value, index)  {
+              # Render as a link
+              url <- sprintf("https://www.biddit.be/fr/catalog/detail/%s", data[index, "propertyID"], value)
+              htmltools::tags$a(href = url, target = "_blank", as.character(value))
+            }),
+          Fresh_flag= colDef(
+            "Recency"
+          ),
+          land_surface = colDef(
+            na = "–",
+            "Size Land",
+            format = colFormat(separators = TRUE,suffix = " m²")),
+          building_year= colDef(
+            na = "–",
+            "Year Built"),
+          house_surface= colDef(
+            na = "–",
+            "Surface House",
+            format = colFormat(separators = TRUE,suffix = " m²")),
+          uRL=colDef(show = FALSE)
+        ))
+   })
+  
+  
+ 
   
 }
 

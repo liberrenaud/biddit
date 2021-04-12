@@ -18,6 +18,11 @@ previous_pull <- read_csv("00_Data/previous_pull.csv") %>%
   mutate(Fresh_flag="Old_property",
          propertyID=as.character(propertyID))
 
+# previous_pull <- read_csv("ShinyApp/00_Data/export_last_pull.csv") %>% 
+#   select(propertyID) %>% 
+#   mutate(Fresh_flag="Old_property",
+#          propertyID=as.character(propertyID))
+
 
 # Fresh pull
 raw_property_tbl <- read_csv("00_Data/Property_details.csv")%>%
