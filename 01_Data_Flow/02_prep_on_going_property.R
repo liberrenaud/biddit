@@ -41,60 +41,56 @@ cleaned_property %>%
 
 
 tbl_details <- cleaned_property %>% 
-  select(id,type,price,land_surface,building_year,house_surface,building_state)
-
-
-high_level <- cleaned_property %>% 
-  group_by(id) %>% 
-  summarise(type=max(type),
-            price=max(price),
-            Status = max(Fresh_flag))
+  select(id,type,price_num,land_surface,building_year,house_surface,building_state)
 
 
 
-reactable(
-  high_level,
-  columns = list(
-    id=colDef(show = FALSE)),
-  details = function(index) {
-    houses <- filter(tbl_details, id == high_level$id[index]) %>% select(-id)
-    tbl <- reactable(houses, 
-                     outlined = TRUE,
-                     highlight = TRUE, 
-                     fullWidth = FALSE,
-                     columns = list(
-                       land_surface = colDef(
-                         na = "–",
-                         "Size Land",
-                         format = colFormat(separators = TRUE,suffix = " m²")),
-                       building_year= colDef(
-                         na = "–",
-                         "Year Built"),
-                       house_surface= colDef(
-                         na = "–",
-                         "Surface House",
-                         format = colFormat(separators = TRUE,suffix = " m²"))
-                     ))
-    htmltools::div(style = list(margin = "12px 45px"), tbl)
-  },
-  onClick = "expand",
-  rowStyle = list(cursor = "pointer")
-)
 
-high_level <- cleaned_property %>% 
-  select(type, Fresh_flag,price,land_surface,building_year,house_surface,uRL) %>% 
-  mutate(Fresh_flag=if_else(Fresh_flag=="Old_property","Old","New"))
 
-status_badge <- function(color = "#aaa", width = "9px", height = width) {
-  span(style = list(
-    display = "inline-block",
-    marginRight = "8px",
-    width = width,
-    height = height,
-    backgroundColor = color,
-    borderRadius = "50%"
-  ))
-}
+# reactable(
+#   high_level,
+#   columns = list(
+#     id=colDef(show = FALSE)),
+#   details = function(index) {
+#     houses <- filter(tbl_details, id == high_level$id[index]) %>% select(-id)
+#     tbl <- reactable(houses, 
+#                      outlined = TRUE,
+#                      highlight = TRUE, 
+#                      fullWidth = FALSE,
+#                      columns = list(
+#                        land_surface = colDef(
+#                          na = "–",
+#                          "Size Land",
+#                          format = colFormat(separators = TRUE,suffix = " m²")),
+#                        building_year= colDef(
+#                          na = "–",
+#                          "Year Built"),
+#                        house_surface= colDef(
+#                          na = "–",
+#                          "Surface House",
+#                          format = colFormat(separators = TRUE,suffix = " m²"))
+#                      ))
+#     htmltools::div(style = list(margin = "12px 45px"), tbl)
+#   },
+#   onClick = "expand",
+#   rowStyle = list(cursor = "pointer")
+# )
+# 
+high_level <- cleaned_property %>%
+  select(type, Fresh_flag,price,land_surface,building_year,house_surface,uRL,price_num) %>%
+  mutate(Fresh_flag=if_else(Fresh_flag=="Old_property","Old","New"),
+         price_num=price_num/1000)
+# 
+# status_badge <- function(color = "#aaa", width = "9px", height = width) {
+#   span(style = list(
+#     display = "inline-block",
+#     marginRight = "8px",
+#     width = width,
+#     height = height,
+#     backgroundColor = color,
+#     borderRadius = "50%"
+#   ))
+# }
 
 
 
@@ -109,6 +105,10 @@ reactable(
         url <- sprintf("https://www.biddit.be/fr/catalog/detail/%s", data[index, "propertyID"], value)
         htmltools::tags$a(href = url, target = "_blank", as.character(value))
       }),
+    price_num=colDef(
+      "Price",
+      format = colFormat(separators = TRUE,suffix = " k€")
+    ),
     Fresh_flag= colDef(
       "Recency"
       # ,

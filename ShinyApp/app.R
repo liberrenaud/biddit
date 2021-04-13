@@ -97,8 +97,9 @@ server <- function(input, output) {
 
     prepped_property() %>%
       
-      select(type, Fresh_flag,price,land_surface,building_year,house_surface,uRL) %>% 
-      mutate(Fresh_flag=if_else(Fresh_flag=="Old_property","Old","New")) %>% 
+      select(type, Fresh_flag,price_num,land_surface,building_year,house_surface,uRL) %>% 
+      mutate(Fresh_flag=if_else(Fresh_flag=="Old_property","Old","New"),
+             price_num=price_num/1000) %>% 
       
       reactable(
         striped = TRUE,
@@ -110,6 +111,10 @@ server <- function(input, output) {
               url <- sprintf("https://www.biddit.be/fr/catalog/detail/%s", data[index, "propertyID"], value)
               htmltools::tags$a(href = url, target = "_blank", as.character(value))
             }),
+          price_num=colDef(
+            "Price",
+            format = colFormat(separators = TRUE,suffix = " k€")
+          ),
           Fresh_flag= colDef(
             "Recency"
           ),
