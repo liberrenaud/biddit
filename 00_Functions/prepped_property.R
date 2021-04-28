@@ -12,7 +12,7 @@ prepare_property <-
       mutate(
         zip = str_extract(location, "[[:digit:]]+") %>% as.numeric(),
         county = str_sub(zip, 1L, 2L),
-        building_year = str_extract(details, "Année de construction\n[[:digit:]]+\n") %>%
+        building_year = str_extract(details, "de construction\n[[:digit:]]+\n") %>%
           str_extract("[[:digit:]]+") %>% as.numeric() ,
         house_surface = str_extract(details, "Surface habitable\n[[:digit:]]+ m²\n") %>%
           str_extract("[[:digit:]]+") %>% as.numeric(),
@@ -115,5 +115,5 @@ prepare_property <-
           units = "km"
         ),
         last_pull = format(Sys.time(), "%d %m %Y")
-      )
+      ) 
   }

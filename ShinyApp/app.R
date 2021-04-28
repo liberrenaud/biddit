@@ -103,14 +103,16 @@ server <- function(input, output) {
       
       reactable(
         striped = TRUE,
+        selection = "multiple",
+        onClick = "select",
         columns = list(
           
-          type=colDef(
-            cell = function(value, index)  {
-              # Render as a link
-              url <- sprintf("https://www.biddit.be/fr/catalog/detail/%s", data[index, "propertyID"], value)
-              htmltools::tags$a(href = url, target = "_blank", as.character(value))
-            }),
+          # type=colDef(
+          #   cell = function(value, index)  {
+          #     # Render as a link
+          #     url <- sprintf("https://www.biddit.be/fr/catalog/detail/%s", data[index, "propertyID"], value)
+          #     htmltools::tags$a(href = url, target = "_blank", as.character(value))
+          #   }),
           price_num=colDef(
             "Price",
             format = colFormat(separators = TRUE,suffix = " k€")

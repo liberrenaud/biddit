@@ -20,6 +20,8 @@ favor_location <- c(13,14,50,51,53,42,62,56)
 cleaned_property <- fresh_pull %>% 
   prepare_property() 
 
+data <- fresh_pull
+
 
 cleaned_property %>%  DataExplorer::plot_missing()
 
@@ -99,12 +101,12 @@ reactable(
   striped = TRUE,
   columns = list(
     
-    type=colDef(
-      cell = function(value, index)  {
-        # Render as a link
-        url <- sprintf("https://www.biddit.be/fr/catalog/detail/%s", data[index, "propertyID"], value)
-        htmltools::tags$a(href = url, target = "_blank", as.character(value))
-      }),
+    # type=colDef(
+    #   cell = function(value, index)  {
+    #     # Render as a link
+    #     url <- sprintf("https://www.biddit.be/fr/catalog/detail/%s", data[index, "propertyID"], value)
+    #     htmltools::tags$a(href = url, target = "_blank", as.character(value))
+    #   }),
     price_num=colDef(
       "Price",
       format = colFormat(separators = TRUE,suffix = " k€")
