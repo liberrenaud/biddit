@@ -13,9 +13,10 @@ source("00_Functions/prepped_property.R")
 fresh_pull <-  read_csv("00_Data/fresh_pull.csv")
 key_cities <- read_csv("00_Data/key_cities_prepped.csv")
 location_short <- read_csv("00_Data/postal_code_prepped.csv")
+immersion_school_tbl <- read_rds("00_Data/immersion_school.rds") 
 
-favor_type <- c("Maison","Bungalow","Terrain à bâtir","Bois","Chalet","Ferme","Fermette","Manoir","Maison bel-étage")
-favor_location <- c(13,14,50,51,53,42,62,56)
+favor_type_s <- c("Maison","Bungalow","Terrain à bâtir","Bois","Chalet","Ferme","Fermette","Manoir","Maison bel-étage")
+favor_location_s <- c(13,14,50,51,53,42,62,56)
 
 cleaned_property <- fresh_pull %>% 
   prepare_property() 
@@ -23,7 +24,7 @@ cleaned_property <- fresh_pull %>%
 data <- fresh_pull
 
 
-cleaned_property %>%  DataExplorer::plot_missing()
+#cleaned_property %>%  DataExplorer::plot_missing()
 
 # Apply then the algorithm to get the price prediction
 
@@ -34,6 +35,37 @@ cleaned_property %>%  DataExplorer::plot_missing()
 cleaned_property %>%
   write_csv("ShinyApp/00_Data/export_last_pull.csv")
 
+
+
+
+immersion_school_tbl
+location_short
+key_cities
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### SOME STUFF TO TURN IN FUNCTIONS?
 
 cleaned_property %>%
   leaflet(height = 600) %>%

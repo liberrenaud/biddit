@@ -1,6 +1,12 @@
 prepare_property <-
-  function(data) {
+  function(data,
+           favor_type=favor_type_s,
+           favor_location=favor_location_s
+           ) {
+    
+    # Parameter used to taken action in data cleansing step
     land_type <- c("Terrain à bâtir", "Bois")
+    
     
     
     data %>%
@@ -8,7 +14,7 @@ prepare_property <-
       
       filter(type %in% favor_type) %>%
       
-      # Extract Key features
+      # Extract Key features from strings
       mutate(
         zip = str_extract(location, "[[:digit:]]+") %>% as.numeric(),
         county = str_sub(zip, 1L, 2L),
