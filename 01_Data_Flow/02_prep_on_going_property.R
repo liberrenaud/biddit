@@ -37,8 +37,35 @@ cleaned_property %>%
 
 
 
+# Preparation of the integration of the school
 
-immersion_school_tbl
+school_coordinate_tbl <- immersion_school_tbl %>% 
+  left_join(location_short 
+            ,by=c('postal_code'='Code')) %>% 
+  filter(!is.na(Latitude))
+  
+
+school_coordinate_short_tbl <- school_coordinate_tbl %>% 
+  select(postal_code,Longitude,Latitude)
+
+vec_BE_PostCode <-  pull(location_short, Code) %>% unique()
+vec_School_PostCode <-  pull(immersion_school_tbl, postal_code) %>% unique()
+
+grid_post_code <- expand.grid(vec_BE_PostCode,vec_School_PostCode)
+
+grid_post_code %>% as_tibble() %>% 
+  rename('postcode_city'='Var1',
+         'postcode_school'='Var2') %>% 
+  left_join(location_short,
+            by=c("postcode_city"="Code")) %>% 
+  rename('long_city'='Longitude',
+         'lat_city'='Latitude') %>% 
+  select(-Coordonnees) %>% 
+  left_join(school_coordinate_short_tbl,
+            by=c("postcode_school"="postal_code")) %>% 
+  rename('long_school'='Longitude',
+         'lat_school'='Latitude')
+
 location_short
 key_cities
 
