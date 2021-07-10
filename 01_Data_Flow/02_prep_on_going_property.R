@@ -8,26 +8,73 @@ library(gmt)
 library(DataExplorer)
 
 source("00_Functions/prepped_property.R")
+source("00_Functions/prepped_school distance.R")
 
+#Import data
 
 fresh_pull <-  read_csv("00_Data/fresh_pull.csv")
 key_cities <- read_csv("00_Data/key_cities_prepped.csv")
 location_short <- read_csv("00_Data/postal_code_prepped.csv")
 immersion_school_tbl <- read_rds("00_Data/immersion_school.rds") 
+city_name <-  read.csv("00_Data/code-postaux-belge.csv",sep=";") %>% 
+  select(Code,Localite)
 
+
+#Define the parameters
+
+#Favourite type of "property"
 favor_type_s <- c("Maison","Bungalow","Terrain à bâtir","Bois","Chalet","Ferme","Fermette","Manoir","Maison bel-étage")
-favor_location_s <- c(13,14,50,51,53,42,62,56)
 
+#Define the favorite location to live (2 digit area of the postal code)
+favor_location_s <- c(13,14,15,16,17,18,19,50,51,53,55,56,42,62,69,67,66,68,69,56)
+
+
+# Prepare biddit pull data set (feature engineering)
 cleaned_property <- fresh_pull %>% 
   prepare_property() 
 
+#Needed sometime for testing
 data <- fresh_pull
 
+#Define the Belgium postal codes that are within 10Km of an Immersion school
+distance_schools <-prepare_school_distance() 
 
+
+#Cross the city close to immersion school within the favourite locations
+city_immersion_school <- distance_schools %>% 
+  mutate(
+    county = str_sub(postcode_city , 1L, 2L),
+    location_prime = case_when(county %in% favor_location_s ~ 1,
+                               TRUE ~ 0)
+  ) %>% 
+  filter(location_prime==1) %>% 
+  group_by(postcode_city) %>% 
+  summarise(dist_school=min(dist_school)) %>% 
+  ungroup() %>% 
+  left_join(location_short,
+            by=c('postcode_city'='Code'))
+
+
+
+# nested_city_immersion <- distance_schools %>% 
+#   select(-dist_school) %>% 
+#   group_by(postcode_city) %>% 
+#   nest()
 #cleaned_property %>%  DataExplorer::plot_missing()
 
-# Apply then the algorithm to get the price prediction
 
+# Prepare here a format so that it can be translated to a web url
+immersion_column <- city_immersion_school %>% 
+  distinct(postcode_city) %>% 
+  mutate(postcode_city=str_glue('BE-{postcode_city},'))
+  
+immersion_column[['postcode_city']]
+
+
+#BE-3500,BE-4300
+
+# FUTURE IDEAS Apply then the algorithm to get the price prediction
+distance_schools %>% filter(postcode_city==4030)
 
 
 # Export to the R app
@@ -35,39 +82,9 @@ data <- fresh_pull
 cleaned_property %>%
   write_csv("ShinyApp/00_Data/export_last_pull.csv")
 
+install.packages("ShinyQuickStarter")
 
 
-# Preparation of the integration of the school
-
-school_coordinate_tbl <- immersion_school_tbl %>% 
-  left_join(location_short 
-            ,by=c('postal_code'='Code')) %>% 
-  filter(!is.na(Latitude))
-  
-
-school_coordinate_short_tbl <- school_coordinate_tbl %>% 
-  select(postal_code,Longitude,Latitude)
-
-vec_BE_PostCode <-  pull(location_short, Code) %>% unique()
-vec_School_PostCode <-  pull(immersion_school_tbl, postal_code) %>% unique()
-
-grid_post_code <- expand.grid(vec_BE_PostCode,vec_School_PostCode)
-
-grid_post_code %>% as_tibble() %>% 
-  rename('postcode_city'='Var1',
-         'postcode_school'='Var2') %>% 
-  left_join(location_short,
-            by=c("postcode_city"="Code")) %>% 
-  rename('long_city'='Longitude',
-         'lat_city'='Latitude') %>% 
-  select(-Coordonnees) %>% 
-  left_join(school_coordinate_short_tbl,
-            by=c("postcode_school"="postal_code")) %>% 
-  rename('long_school'='Longitude',
-         'lat_school'='Latitude')
-
-location_short
-key_cities
 
 
 
@@ -99,6 +116,12 @@ cleaned_property %>%
   addTiles() %>%
   addMarkers(lng = ~Longitude, lat = ~Latitude, popup = ~text)
 
+
+
+city_immersion_school %>%
+  leaflet(height = 600) %>%
+  addTiles() %>%
+  addMarkers(lng = ~Longitude, lat = ~Latitude, popup = ~text)
 
 
 tbl_details <- cleaned_property %>% 

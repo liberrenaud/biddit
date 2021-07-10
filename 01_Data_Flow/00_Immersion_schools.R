@@ -42,7 +42,8 @@ immersion_frame <- immersion_sch_table %>%
   janitor::clean_names() %>% 
   set_names(names(.) %>% str_remove("_2")) %>% 
   mutate(langue=if_else(str_detect(langue,"NL"),"NL",langue)) %>% 
-  filter(!is.na(postal_code))
+  filter(!is.na(postal_code),
+         langue=="NL")
 
 
 #Checks for duplicates

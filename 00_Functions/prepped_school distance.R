@@ -27,7 +27,7 @@ prepare_school_distance <- function(data){
   
   
   # Calculating distance between each postal code and school location
-  distance_schools <- grid_post_code %>% as_tibble() %>% 
+   grid_post_code %>% as_tibble() %>% 
     rename('postcode_city'='Var1',
            'postcode_school'='Var2') %>% 
     left_join(location_short,
@@ -49,7 +49,7 @@ prepare_school_distance <- function(data){
         units = "km"
       )
     ) %>% 
-    filter(dist_school<=15) %>% 
+    filter(dist_school<=10) %>% 
     select(postcode_city, postcode_school,dist_school)
   
 }

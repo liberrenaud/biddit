@@ -68,18 +68,20 @@ server <- function(input, output) {
         filter(Fresh_flag =="New_property")
     else raw_property_tbl
     
-
-    })
+    
+      })
   
+SharedProperty <- SharedData$new(prepped_property, key = ~propertyID, group = "propertyID")
 
+     
   
   # Render Map
   
   output$leaflet <- renderLeaflet({
     
-    req(prepped_property)
+    req(SharedProperty)
     
-    prepped_property() %>%
+    SharedProperty %>%
       leaflet(height = 600) %>%
       addTiles() %>%
       addMarkers(lng = ~Longitude, lat = ~Latitude, popup = ~text)
